@@ -11,6 +11,7 @@ import { HttpService } from '@nestjs/axios';
 @Injectable()
 export class OrquestradorService {
   //Necessário utilizar com o RabbitMQ e/ou Docker
+  //manter isso comentado por hora
 
   // private client: ClientProxy;
 
