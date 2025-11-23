@@ -11,6 +11,8 @@ export class AgentsService {
   async dispatchAgent(domain: string, agent: string, payload: any) {
     const agentUrls: Record<string, string> = {
       frontend: 'http://localhost:8081',
+      database: 'http://localhost:8004',
+      ux: 'http://localhost:8085',
     };
 
     const url = `${agentUrls[domain]}/${agent}`;
@@ -27,22 +29,21 @@ export class AgentsService {
         return entry.domain;
       }
     }
-    return 'frontend'; //
+    return 'frontend';
   }
+
   chooseAgent(text: string, domain: string): string {
     const t = text.toLowerCase();
 
-    // Procura no MultiAgentes pelo domínio certo
     const domainEntry = MultiAgentes.find((d) => d.domain === domain);
-    if (!domainEntry) return 'backlog'; // fallback
+    if (!domainEntry) return 'backlog';
 
-    // Escolhe o agente pelo texto
     for (const agent of domainEntry.agents) {
       if (agent.keywords.some((k) => t.includes(k))) {
         return agent.name;
       }
     }
 
-    return 'backlog'; // fallback
+    return 'backlog';
   }
 }
