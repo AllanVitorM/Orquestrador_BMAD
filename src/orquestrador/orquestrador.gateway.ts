@@ -2,49 +2,63 @@ import {
   WebSocketGateway,
   WebSocketServer,
   SubscribeMessage,
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  MessageBody,
+  ConnectedSocket,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
-import { OrquestradorService } from './orquestrador.service';
+import { Server, Socket } from 'socket.io';
+import { ConversationService } from 'src/conversation/conversation.service';
 
-
-@WebSocketGateway({ cors: { origin: 'http://localhost:3000' } })
+@WebSocketGateway({
+  cors: {
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  },
+})
 export class OrquestradorGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private readonly orquestradorService: OrquestradorService) {}
+  constructor(private readonly conversationService: ConversationService) {}
   @WebSocketServer() server: Server;
+
+  afterInit(server: Server) {
+    // Aqui garantimos que o ConversationService use o MESMO Server do Gateway
+    this.conversationService.setSocketServer(server);
+  }
+
   handleConnection(client: any) {
-    console.log(' cliente conectado: ', client.id);
+    console.log(`🟢 Cliente conectado: ${client.id}`);
   }
   handleDisconnect(client: any) {
-    console.log('cliente desconectado: ', client.id);
+    console.log(`🔴 Cliente desconectado: ${client.id}`);
   }
   @SubscribeMessage('message')
-  async handleMessage(client: any, @MessageBody() data: { text: string }) {
-    console.log('Mensagem recebida do frontend:', data);
+  async handleMessage(@MessageBody() payload: any) {
+    const { conversationId, text } = payload;
 
-    const responseFromAgent = await this.orquestradorService.delegateTask(data);
-
-    const formattedMessage = Object.entries(responseFromAgent)
-      .map(([key, value]) => `**${key}**:\n${value}`)
-      .join('\n\n');
-
-    console.log('Resposta do OrquestradorService:', formattedMessage);
-
-    if (client) {
-      client.emit('message', {
-        from: 'orquestrador',
-        original: formattedMessage,
-      });
-    } else {
-      console.warn('Cliente não definido');
-      this.server.emit('message', {
-        from: 'orquestrador',
-        original: formattedMessage,
-      });
+    if (!conversationId) {
+      console.log('❌ ERRO: mensagem recebida sem conversationId!');
+      return;
     }
+    // Chamando o conversation service, que salva no BD e emite socket
+    await this.conversationService.addMessage(conversationId, {
+      sender: 'user',
+      text,
+    });
+
+    return true;
+  }
+
+  @SubscribeMessage('join')
+  handleJoin(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() conversationId: string,
+  ) {
+    client.join(conversationId);
+
+    client.emit('joined', { conversationId });
   }
 }
