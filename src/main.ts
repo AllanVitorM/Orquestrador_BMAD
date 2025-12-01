@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,12 +15,12 @@ async function bootstrap() {
     console.log('Banco online');
   });
 
-
   app.enableCors({
     origin: 'http://localhost:3000',
     credentials: true,
   });
 
+  app.use(cookieParser());
   await app.listen(8080);
   console.log(`Orquestrador rodando!`);
 }

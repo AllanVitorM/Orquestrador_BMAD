@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     OrquestradorModule,
     AuthModule,
     UserModule,
+    ConversationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

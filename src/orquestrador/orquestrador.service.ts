@@ -5,7 +5,11 @@ import { AgentsService } from 'src/agents/agents.service';
 export class OrquestradorService {
   constructor(private readonly agentsService: AgentsService) {}
 
-  async delegateTask(payload: { text: string }) {
+  async delegateTask(payload: {
+    text: string;
+    sender?: string;
+    conversationId?: string;
+  }) {
     const domain = this.agentsService.chooseDomain(payload.text);
     const agent = this.agentsService.chooseAgent(payload.text, domain);
     const result = await this.agentsService.dispatchAgent(
