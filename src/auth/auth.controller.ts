@@ -38,7 +38,7 @@ export class AuthController {
       sameSite: 'none',
       secure: true,   
       maxAge: 15 * 60 * 1000,
-      domain: 'up.railway.app'
+
     });
 
     res.cookie('refresh_token', refresh_token, {
@@ -46,7 +46,6 @@ export class AuthController {
       sameSite: 'none',
       secure: true,   
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      domain: 'up.railway.app'
     });
 
     return {
@@ -67,7 +66,6 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      domain: 'up.railway.app'
     });
 
     return { message: 'Token atualizado' };
