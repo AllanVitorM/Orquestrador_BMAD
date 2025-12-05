@@ -18,6 +18,8 @@ async function bootstrap() {
   app.enableCors({
     origin: 'https://multiagentes-frontend.vercel.app',
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    exposedHeaders: ['Set-Cookie'],
   });
 
   app.use(cookieParser());
