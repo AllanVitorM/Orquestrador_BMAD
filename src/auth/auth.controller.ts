@@ -35,14 +35,14 @@ export class AuthController {
 
     res.cookie('access_token', access_token, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       secure: true,   
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       secure: true,   
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -64,7 +64,7 @@ export class AuthController {
     res.cookie('access_token', newToken.access_token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
     });
 
     return { message: 'Token atualizado' };
