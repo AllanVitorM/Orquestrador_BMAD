@@ -12,7 +12,7 @@ import { ConversationService } from 'src/conversation/conversation.service';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'https://multiagentes-frontend.vercel.app',
     credentials: true,
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization'],
