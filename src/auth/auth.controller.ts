@@ -38,7 +38,7 @@ export class AuthController {
       sameSite: 'none',
       secure: true,   
       maxAge: 15 * 60 * 1000,
-
+      path:'/'
     });
 
     res.cookie('refresh_token', refresh_token, {
@@ -66,9 +66,10 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
+      path:'/'
     });
 
-    return { message: 'Token atualizado' };
+    return { message: 'Token atualizado',  };
   }
 
   @UseGuards(JwtAuthGuards)
